@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useDebouncedValue } from "@tanstack/react-pacer";
 
 const fetchCharacters = async (
-  page = 0,
+  page = 1,
   name = ""
 ): Promise<CharacterRouteResponse> => {
   const response = await fetch(`/api/character?page=${page}&name=${name}`);
@@ -65,12 +65,14 @@ export default function Search() {
   }
   return (
     <div>
-      <Input
-        type="search"
-        placeholder="Search..."
-        value={name}
-        onChange={(e) => handleNameChange(e)}
-      />
+      <div className="w-1/2">
+        <Input
+          type="search"
+          placeholder="Search..."
+          value={name}
+          onChange={(e) => handleNameChange(e)}
+        />
+      </div>
       {status === "pending" ? (
         <div>Loading...</div>
       ) : status === "error" ? (
@@ -86,22 +88,30 @@ export default function Search() {
             // indicator since our `status === 'pending'` state won't be triggered
             isFetching ? <span> Loading...</span> : null
           } */}
-          {data?.characters.map((character, i) => (
-            <div key={i} className="flex items-center gap-2">
-              {character.imageUrl ? (
-                <Image
-                  src={character.imageUrl}
-                  alt={character.name}
-                  width={50}
-                  height={50}
-                  style={{ width: "200px", height: "auto" }}
-                />
-              ) : (
-                <div>No image</div>
-              )}
-              <div>{character.name}</div>
-            </div>
-          ))}
+          <div className="grid grid-cols-5 gap-10 ">
+            {data?.characters.map((character, i) => (
+              <div
+                key={i}
+                className="flex items-center bg-accent p-4 rounded-lg"
+              >
+                {character.imageUrl ? (
+                  <div className="relative w-40 h-40">
+                    <Image
+                      src={character.imageUrl}
+                      alt={character.name}
+                      fill
+                      className="object-contain"
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+                    />
+                  </div>
+                ) : (
+                  <div>No image</div>
+                )}
+                <div className="flex-0">{character.name}</div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
