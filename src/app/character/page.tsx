@@ -5,6 +5,7 @@ import { CharacterRouteResponse } from "@/app/api/character/route";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { useDebouncedValue } from "@tanstack/react-pacer";
+import Link from "next/link";
 
 const fetchCharacters = async (
   page = 1,
@@ -14,12 +15,13 @@ const fetchCharacters = async (
   return await response.json();
 };
 
-export default function Search() {
+export default function Character() {
   const [page, setPage] = useState(1);
   const [name, setName] = useState("");
 
   const [debouncedName] = useDebouncedValue(name, {
     wait: 500,
+    onExecute: () => setPage(1),
   });
 
   const queryClient = useQueryClient();
@@ -64,7 +66,7 @@ export default function Search() {
     setName(e.target.value);
   }
   return (
-    <div>
+    <div className="w-full">
       <div className="w-1/2">
         <Input
           type="search"
@@ -88,29 +90,38 @@ export default function Search() {
             // indicator since our `status === 'pending'` state won't be triggered
             isFetching ? <span> Loading...</span> : null
           } */}
-          <div className="grid grid-cols-5 gap-10 ">
-            {data?.characters.map((character, i) => (
-              <div
-                key={i}
-                className="flex items-center bg-accent p-4 rounded-lg"
-              >
-                {character.imageUrl ? (
-                  <div className="relative w-40 h-40">
-                    <Image
-                      src={character.imageUrl}
-                      alt={character.name}
-                      fill
-                      className="object-contain"
-                      placeholder="blur"
-                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-                    />
+          <div className="flex justify-center ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full h-[calc(100vh-20rem)]">
+              {data?.characters.map((character, i) => (
+                <Link
+                  href={`/character/${encodeURIComponent(character.name)}`}
+                  key={i}
+                  className="block bg-accent p-4 rounded-lg hover:bg-accent/80 transition-colors"
+                >
+                  <div className="flex flex-col items-center">
+                    {character.imageUrl ? (
+                      <div className="relative w-40 h-40 mb-4">
+                        <Image
+                          src={character.imageUrl}
+                          alt={character.name}
+                          fill
+                          className="object-contain"
+                          placeholder="blur"
+                          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full h-40 bg-gray-200 flex items-center justify-center mb-4">
+                        <span className="text-gray-500">No image</span>
+                      </div>
+                    )}
+                    <div className="text-center font-medium hover:underline">
+                      {character.name}
+                    </div>
                   </div>
-                ) : (
-                  <div>No image</div>
-                )}
-                <div className="flex-0">{character.name}</div>
-              </div>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       )}

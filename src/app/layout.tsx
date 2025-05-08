@@ -32,7 +32,7 @@ export default function RootLayout({
         <ReactQueryClientProvider>
           <SidebarProvider>
             <AppSidebar />
-            <main>
+            <main className="w-full">
               <SidebarTrigger />
               {children}
             </main>

@@ -20,8 +20,8 @@ const items = [
     icon: Scale,
   },
   {
-    title: "Search",
-    url: "/search",
+    title: "Character",
+    url: "/character",
     icon: Search,
   },
 ];
