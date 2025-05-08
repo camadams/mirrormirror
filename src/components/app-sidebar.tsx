@@ -1,5 +1,5 @@
 "use client";
-import { Scale, Search } from "lucide-react";
+import { Home, Scale, Search } from "lucide-react";
 
 import {
   Sidebar,
@@ -17,6 +17,11 @@ import { useSearchParams } from "next/navigation";
 
 // Menu items.
 const items = [
+  {
+    title: "Home",
+    url: "/",
+    icon: Home,
+  },
   {
     title: "Compare",
     url: "/compare",

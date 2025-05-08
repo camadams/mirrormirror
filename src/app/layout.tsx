@@ -4,6 +4,9 @@ import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider";
+import DisneyMusicPlayer from "@/components/DisneyMusicPlayer";
+import { AudioProvider } from "@/contexts/AudioContext";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,13 +33,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
       >
         <ReactQueryClientProvider>
-          <SidebarProvider>
-            <AppSidebar />
-            <main className="w-full h-full">
-              <SidebarTrigger />
-              {children}
-            </main>
-          </SidebarProvider>
+          <AudioProvider audioSrc="/somedaymyprince.mp3">
+            <SidebarProvider>
+              <AppSidebar />
+              <main className="w-full h-full">
+                <SidebarTrigger />
+                {/* Disney Music Player */}
+                <DisneyMusicPlayer />
+                {children}
+              </main>
+            </SidebarProvider>
+          </AudioProvider>
         </ReactQueryClientProvider>
       </body>
     </html>
