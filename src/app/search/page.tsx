@@ -3,29 +3,34 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { CharacterRouteResponse } from "@/app/api/character/route";
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
 
-const fetchCharacters = async (page = 0): Promise<CharacterRouteResponse> => {
-  const response = await fetch(`/api/character?page=${page}`);
+const fetchCharacters = async (
+  page = 0,
+  name = ""
+): Promise<CharacterRouteResponse> => {
+  const response = await fetch(`/api/character?page=${page}&name=${name}`);
   return await response.json();
 };
 
 export default function Search() {
   const [page, setPage] = useState(1);
+  const [name, setName] = useState("");
   const queryClient = useQueryClient();
   const { status, data, error, isFetching, isPlaceholderData } = useQuery({
-    queryKey: ["characters", page],
-    queryFn: () => fetchCharacters(page),
+    queryKey: ["characters", page, name],
+    queryFn: () => fetchCharacters(page, name),
     staleTime: 5000,
   });
 
   useEffect(() => {
     if (!isPlaceholderData && data?.hasMore) {
       queryClient.prefetchQuery({
-        queryKey: ["characters", page + 1],
-        queryFn: () => fetchCharacters(page + 1),
+        queryKey: ["characters", page + 1, name],
+        queryFn: () => fetchCharacters(page + 1, name),
       });
     }
-  }, [data, isPlaceholderData, page, queryClient]);
+  }, [data, isPlaceholderData, page, name, queryClient]);
 
   function Page() {
     return (
@@ -48,8 +53,18 @@ export default function Search() {
       </>
     );
   }
+
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setName(e.target.value);
+  }
   return (
     <div>
+      <Input
+        type="search"
+        placeholder="Search..."
+        value={name}
+        onChange={(e) => handleNameChange(e)}
+      />
       {status === "pending" ? (
         <div>Loading...</div>
       ) : status === "error" ? (
@@ -67,17 +82,17 @@ export default function Search() {
           } */}
           {data?.characters.map((character, i) => (
             <div key={i} className="flex items-center gap-2">
-              {/* {character.imageUrl ? (
+              {character.imageUrl ? (
                 <Image
                   src={character.imageUrl}
                   alt={character.name}
-                  width={10}
-                  height={10}
+                  width={50}
+                  height={50}
                   style={{ width: "200px", height: "auto" }}
                 />
               ) : (
                 <div>No image</div>
-              )} */}
+              )}
               <div>{character.name}</div>
             </div>
           ))}
