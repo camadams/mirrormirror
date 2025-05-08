@@ -1,3 +1,4 @@
+"use client";
 import { Scale, Search } from "lucide-react";
 
 import {
@@ -11,6 +12,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 
 // Menu items.
 const items = [
@@ -27,6 +30,8 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const searchParams = useSearchParams();
+  const currentQuery = Object.fromEntries(searchParams.entries());
   return (
     <Sidebar>
       <SidebarContent>
@@ -37,7 +42,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url}>
+                    <Link href={{ pathname: item.url, query: currentQuery }}>
                       <item.icon />
                       <span className="font-[family-name:var(--font-geist-sans)]">
                         {item.title}
