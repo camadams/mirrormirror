@@ -6,14 +6,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { useDebouncedValue } from "@tanstack/react-pacer";
 import Link from "next/link";
-
-const fetchCharacters = async (
-  page = 1,
-  name = ""
-): Promise<CharacterRouteResponse> => {
-  const response = await fetch(`/api/character?page=${page}&name=${name}`);
-  return await response.json();
-};
+import { fetchCharacters } from "@/lib/utils";
 
 export default function Character() {
   const [page, setPage] = useState(1);
@@ -107,6 +100,9 @@ export default function Character() {
                             fill
                             className="object-contain"
                             placeholder="blur"
+                            // onError={(e) => {
+                            //   e.currentTarget.src = "/me.jpg";
+                            // }}
                             blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
                           />
                         </div>
