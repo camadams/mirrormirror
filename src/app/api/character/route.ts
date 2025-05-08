@@ -14,7 +14,6 @@ const parseDisneyResponse = (data: any): Array<Character> => {
   return data.map((item: any) => ({
     name: item.name,
     imageUrl: item.imageUrl,
-    // Add more fields as needed
     id: item._id,
     films: item.films,
     shortFilms: item.shortFilms,
@@ -38,16 +37,22 @@ export async function GET(req: Request) {
     const data = await response.json();
     const result = parseDisneyResponse(data.data);
 
-    return Response.json({
-      characters: result,
-      hasMore: !!data.info?.nextPage,
-    });
+    return Response.json(
+      {
+        characters: result,
+        hasMore: !!data.info?.nextPage,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching character data:", error);
-    return Response.json({
-      error: "Error fetching character data",
-      characters: [],
-      hasMore: false,
-    });
+    return Response.json(
+      {
+        error: "Error fetching character data",
+        characters: [],
+        hasMore: false,
+      },
+      { status: 500 }
+    );
   }
 }

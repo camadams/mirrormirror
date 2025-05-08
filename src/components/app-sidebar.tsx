@@ -23,14 +23,14 @@ const items = [
     icon: Home,
   },
   {
-    title: "Compare",
-    url: "/compare",
-    icon: Scale,
-  },
-  {
     title: "Character",
     url: "/character",
     icon: Search,
+  },
+  {
+    title: "Compare",
+    url: "/compare",
+    icon: Scale,
   },
 ];
 
@@ -38,7 +38,7 @@ const items = [
 function SidebarNavItems() {
   const searchParams = useSearchParams();
   const currentQuery = Object.fromEntries(searchParams.entries());
-  
+
   return (
     <SidebarMenu>
       {items.map((item) => (

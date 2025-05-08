@@ -1,162 +1,237 @@
 "use client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CharacterRouteResponse } from "@/app/api/character/route";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-
-const fetchCharacter = async (
-  name: string
-): Promise<CharacterRouteResponse> => {
-  const response = await fetch(
-    `/api/character?name=${encodeURIComponent(name)}`
-  );
-  return await response.json();
-};
+import { fetchCharacters } from "@/lib/utils";
+import {
+  ArrowLeft,
+  Award,
+  Film,
+  Heart,
+  Shield,
+  Tv,
+  Gamepad2,
+  MapPin,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Suspense } from "react";
 
 export default function CharacterDetail() {
-  const queryClient = useQueryClient();
+  return (
+    <Suspense fallback={<CharacterDetailSkeleton />}>
+      <CharacterContent />
+    </Suspense>
+  );
+}
 
-  const cachedData = queryClient.getQueryData<CharacterRouteResponse>([
-    "character",
-    1,
-    "Achilles",
-  ]);
-
-  console.log(cachedData);
-
+function CharacterContent() {
   const params = useParams();
   const characterName = decodeURIComponent(params.name as string);
 
-  const { status, data, error } = useQuery({
+  const { status, data, error, isLoading } = useQuery({
     queryKey: ["character", characterName],
-    queryFn: () => fetchCharacter(characterName),
+    queryFn: () => fetchCharacters(1, characterName),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
+  const searchParams = useSearchParams();
+  const currentQuery = Object.fromEntries(searchParams.entries());
+  const character = data?.characters[0];
+
+  // Define sections using an array for better maintainability
+  const characterSections = [
+    {
+      title: "Films",
+      icon: <Film className="h-5 w-5 mr-2" />,
+      data: character?.films || [],
+      colorClass: "bg-primary/10 text-primary",
+    },
+    {
+      title: "Short Films",
+      icon: <Film className="h-5 w-5 mr-2" />,
+      data: character?.shortFilms || [],
+      colorClass: "bg-cyan-100 text-cyan-800",
+    },
+    {
+      title: "TV Shows",
+      icon: <Tv className="h-5 w-5 mr-2" />,
+      data: character?.tvShows || [],
+      colorClass: "bg-purple-100 text-purple-800",
+    },
+    {
+      title: "Video Games",
+      icon: <Gamepad2 className="h-5 w-5 mr-2" />,
+      data: character?.videoGames || [],
+      colorClass: "bg-emerald-100 text-emerald-800",
+    },
+    {
+      title: "Park Attractions",
+      icon: <MapPin className="h-5 w-5 mr-2" />,
+      data: character?.parkAttractions || [],
+      colorClass: "bg-amber-100 text-amber-800",
+    },
+    {
+      title: "Allies",
+      icon: <Heart className="h-5 w-5 mr-2" />,
+      data: character?.allies || [],
+      colorClass: "bg-rose-100 text-rose-800",
+    },
+    {
+      title: "Enemies",
+      icon: <Shield className="h-5 w-5 mr-2" />,
+      data: character?.enemies || [],
+      colorClass: "bg-red-100 text-red-800",
+    },
+  ];
+
   return (
-    <div className="p-8">
-      <Link
-        href="/character"
-        className="text-blue-500 hover:underline mb-4 inline-block"
+    <div className="w-full max-w-6xl mx-auto p-6 pb-20 sm:p-8 font-[family-name:var(--font-geist-sans)]">
+      <Button
+        variant="ghost"
+        size="sm"
+        asChild
+        className="mb-6 hover:bg-primary/10 text-primary"
       >
-        &larr; Back to all characters
-      </Link>
+        <Link href={{ pathname: "/character", query: currentQuery }}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to all characters
+        </Link>
+      </Button>
 
-      <h1 className="text-3xl font-bold mb-6">{characterName}</h1>
-
-      {status === "pending" ? (
-        <div className="text-xl">Loading character information...</div>
+      {isLoading ? (
+        <CharacterDetailSkeleton />
       ) : status === "error" ? (
-        <div className="text-red-500">Error: {error.message}</div>
-      ) : data?.error ? (
-        <div className="text-red-500">{data.error}</div>
-      ) : data?.characters && data.characters.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-accent p-6 rounded-lg">
-            {data.characters[0].imageUrl ? (
-              <div className="relative w-full h-96 mb-4">
-                <Image
-                  src={data.characters[0].imageUrl}
-                  alt={data.characters[0].name}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            ) : (
-              <div className="w-full h-96 bg-gray-200 flex items-center justify-center mb-4">
-                <span className="text-gray-500">No image available</span>
-              </div>
-            )}
-            <h2 className="text-2xl font-semibold mb-2">
-              {data.characters[0].name}
-            </h2>
-            {data.characters[0].id && (
-              <p className="text-gray-500 mb-4">ID: {data.characters[0].id}</p>
-            )}
-          </div>
-
-          <div className="space-y-6">
-            {data.characters[0].films &&
-              data.characters[0].films.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Films</h3>
-                  <ul className="list-disc pl-5">
-                    {data.characters[0].films.map((film, index) => (
-                      <li key={index}>{film}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-            {data.characters[0].tvShows &&
-              data.characters[0].tvShows.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">TV Shows</h3>
-                  <ul className="list-disc pl-5">
-                    {data.characters[0].tvShows.map((show, index) => (
-                      <li key={index}>{show}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-            {data.characters[0].videoGames &&
-              data.characters[0].videoGames.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Video Games</h3>
-                  <ul className="list-disc pl-5">
-                    {data.characters[0].videoGames.map((game, index) => (
-                      <li key={index}>{game}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-            {data.characters[0].parkAttractions &&
-              data.characters[0].parkAttractions.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">
-                    Park Attractions
-                  </h3>
-                  <ul className="list-disc pl-5">
-                    {data.characters[0].parkAttractions.map(
-                      (attraction, index) => (
-                        <li key={index}>{attraction}</li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
-
-            {data.characters[0].allies &&
-              data.characters[0].allies.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Allies</h3>
-                  <ul className="list-disc pl-5">
-                    {data.characters[0].allies.map((ally, index) => (
-                      <li key={index}>{ally}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-            {data.characters[0].enemies &&
-              data.characters[0].enemies.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Enemies</h3>
-                  <ul className="list-disc pl-5">
-                    {data.characters[0].enemies.map((enemy, index) => (
-                      <li key={index}>{enemy}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-          </div>
+        <div className="bg-destructive/10 text-destructive p-6 rounded-lg text-center">
+          <p className="font-semibold">Error loading character</p>
+          <p className="text-sm mt-2">{(error as Error).message}</p>
+        </div>
+      ) : !character ? (
+        <div className="bg-muted p-6 rounded-lg text-center">
+          <p className="font-semibold">No character data found</p>
         </div>
       ) : (
-        <div className="text-xl">Character not found</div>
+        <div className="bg-card rounded-xl shadow-lg overflow-hidden">
+          {/* Character Header */}
+          <div className="bg-primary/5 p-6 sm:p-8 flex flex-col md:flex-row gap-6 items-center md:items-start">
+            <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+              {character.imageUrl ? (
+                <Image
+                  src={character.imageUrl}
+                  alt={character.name}
+                  fill
+                  className="object-cover bg-white"
+                  priority
+                />
+              ) : (
+                <div className="w-full h-full bg-muted flex items-center justify-center">
+                  <Award className="h-16 w-16 text-muted-foreground/50" />
+                </div>
+              )}
+            </div>
+
+            <div className="text-center md:text-left">
+              <h1 className="text-4xl md:text-5xl font-bold text-primary animate-float">
+                {character.name}
+              </h1>
+              <div className="mt-4 flex flex-wrap gap-2 justify-center md:justify-start">
+                {characterSections
+                  .filter((section) => section.data.length > 0)
+                  .map((section) => (
+                    <div
+                      key={section.title}
+                      className={`${section.colorClass} px-3 py-1 rounded-full text-xs font-medium flex items-center`}
+                    >
+                      {section.icon}
+                      <span>
+                        {section.data.length} {section.title}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Character Content */}
+          <div className="p-6 sm:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {characterSections.map(
+                (section) =>
+                  section.data.length > 0 && (
+                    <div
+                      key={section.title}
+                      className="bg-muted/30 rounded-lg p-5 border border-muted/30"
+                    >
+                      <h3 className="text-xl font-semibold mb-3 flex items-center text-primary">
+                        {section.icon}
+                        {section.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {section.data.map((item, index) => (
+                          <li
+                            key={index}
+                            className="pl-4 border-l-2 border-primary/20 hover:border-primary/80 transition-colors"
+                          >
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
 }
+
+function CharacterDetailSkeleton() {
+  return (
+    <div className="bg-card rounded-xl shadow-lg overflow-hidden animate-pulse">
+      <div className="bg-primary/5 p-6 sm:p-8 flex flex-col md:flex-row gap-6 items-center md:items-start">
+        <Skeleton className="w-48 h-48 md:w-64 md:h-64 rounded-full" />
+        <div className="text-center md:text-left w-full">
+          <Skeleton className="h-12 w-48 md:w-64 mb-4" />
+          <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-6 w-16 rounded-full" />
+          </div>
+        </div>
+      </div>
+      <div className="p-6 sm:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-muted/30 rounded-lg p-5">
+              <Skeleton className="h-8 w-32 mb-4" />
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-5/6 mb-2" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Add animation
+<style jsx global>{`
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+`}</style>;

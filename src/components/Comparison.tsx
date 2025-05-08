@@ -5,12 +5,15 @@ import { fetchCharacters } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Skeleton } from "./ui/skeleton";
+import Confetti from "react-confetti";
 
 export default function Comparison() {
   const searchParams = useSearchParams();
 
-  const character1Name = searchParams.get("character1") || "";
-  const character2Name = searchParams.get("character2") || "";
+  const characters = searchParams.get("characters") || "";
+  const characterNames = characters.split(",");
+  const character1Name = characterNames[0];
+  const character2Name = characterNames[1];
 
   const {
     status,
@@ -47,6 +50,22 @@ export default function Comparison() {
 
   return (
     <div className="p-4">
+      <div className="flex justify-center">
+        <div className="w-1/2"></div>
+        <div className="w-1/2">
+          <Confetti
+            width={window.innerWidth / 2}
+            height={window.innerHeight}
+            confettiSource={{
+              x: window.innerWidth / 2,
+              y: window.innerHeight - 900,
+              w: window.innerWidth / 2,
+              h: window.innerHeight - 900,
+            }}
+          />
+        </div>
+      </div>
+
       <ComparisonColumn />
     </div>
   );
