@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CharacterRouteResponse } from "@/app/api/character/route";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
+import { useDebouncedValue } from "@tanstack/react-pacer";
 
 const fetchCharacters = async (
   page = 0,
@@ -16,21 +17,26 @@ const fetchCharacters = async (
 export default function Search() {
   const [page, setPage] = useState(1);
   const [name, setName] = useState("");
+
+  const [debouncedName] = useDebouncedValue(name, {
+    wait: 500,
+  });
+
   const queryClient = useQueryClient();
   const { status, data, error, isFetching, isPlaceholderData } = useQuery({
-    queryKey: ["characters", page, name],
-    queryFn: () => fetchCharacters(page, name),
+    queryKey: ["characters", page, debouncedName],
+    queryFn: () => fetchCharacters(page, debouncedName),
     staleTime: 5000,
   });
 
   useEffect(() => {
     if (!isPlaceholderData && data?.hasMore) {
       queryClient.prefetchQuery({
-        queryKey: ["characters", page + 1, name],
-        queryFn: () => fetchCharacters(page + 1, name),
+        queryKey: ["characters", page + 1, debouncedName],
+        queryFn: () => fetchCharacters(page + 1, debouncedName),
       });
     }
-  }, [data, isPlaceholderData, page, name, queryClient]);
+  }, [data, isPlaceholderData, page, debouncedName, queryClient]);
 
   function Page() {
     return (
