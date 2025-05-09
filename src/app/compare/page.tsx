@@ -15,7 +15,7 @@ function ComparisonLoading() {
 
 export default function Compare() {
   return (
-    <div className="items-center w-full p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="items-center w-full  font-[family-name:var(--font-geist-sans)]">
       <Suspense fallback={<ComparisonLoading />}>
         <Comparison />
       </Suspense>
