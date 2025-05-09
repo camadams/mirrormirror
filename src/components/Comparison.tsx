@@ -5,7 +5,6 @@ import { fetchCharacters } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Skeleton } from "./ui/skeleton";
-import ConfettiExplosion from "react-confetti-explosion";
 import { useReward } from "react-rewards";
 
 export default function Comparison() {
@@ -68,7 +67,6 @@ export default function Comparison() {
         <div className="w-1/2"></div>
         <div className="w-1/2"></div>
       </div>
-      {typeof window !== "undefined" && <ConfettiExplosion />}
 
       <button onClick={reward}>
         <span id="rewardId" />
