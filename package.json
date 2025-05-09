@@ -15,15 +15,18 @@
     "@radix-ui/react-tooltip": "^1.2.6",
     "@tanstack/react-pacer": "^0.4.0",
     "@tanstack/react-query": "^5.75.5",
+    "@tanstack/react-query-devtools": "^5.75.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.508.0",
     "next": "15.3.2",
     "react": "^19.0.0",
-    "react-confetti": "^6.4.0",
+    "react-confetti-explosion": "^2.1.2",
     "react-dom": "^19.0.0",
+    "react-rewards": "^2.1.0",
     "tailwind-merge": "^3.2.0",
-    "use-debounce": "^10.0.4"
+    "use-debounce": "^10.0.4",
+    "use-sound": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

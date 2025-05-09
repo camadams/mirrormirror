@@ -20,7 +20,7 @@ import { Suspense } from "react";
 
 export default function CharacterDetail() {
   return (
-    <Suspense fallback={<CharacterDetailSkeleton />}>
+    <Suspense fallback={<div>Loading...</div>}>
       <CharacterContent />
     </Suspense>
   );
@@ -36,8 +36,6 @@ function CharacterContent() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const searchParams = useSearchParams();
-  const currentQuery = Object.fromEntries(searchParams.entries());
   const character = data?.characters[0];
 
   // Define sections using an array for better maintainability
@@ -94,10 +92,9 @@ function CharacterContent() {
         asChild
         className="mb-6 hover:bg-primary/10 text-primary"
       >
-        <Link href={{ pathname: "/character", query: currentQuery }}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to all characters
-        </Link>
+        <Suspense>
+          <GoBack />
+        </Suspense>
       </Button>
 
       {isLoading ? (
@@ -185,6 +182,17 @@ function CharacterContent() {
         </div>
       )}
     </div>
+  );
+}
+
+function GoBack() {
+  const searchParams = useSearchParams();
+  const currentQuery = Object.fromEntries(searchParams.entries());
+  return (
+    <Link href={{ pathname: "/character", query: currentQuery }}>
+      <ArrowLeft className="mr-2 h-4 w-4" />
+      Back to all characters
+    </Link>
   );
 }
 

@@ -5,10 +5,24 @@ import { fetchCharacters } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Skeleton } from "./ui/skeleton";
-import Confetti from "react-confetti";
+import ConfettiExplosion from "react-confetti-explosion";
+import { useReward } from "react-rewards";
 
 export default function Comparison() {
   const searchParams = useSearchParams();
+  const { reward, isAnimating } = useReward("rewardId", "confetti", {
+    spread: 180,
+    startVelocity: 10,
+    colors: [
+      "var(--chart-1)",
+      "var(--chart-2)",
+      "var(--chart-3)",
+      "var(--chart-4)",
+      "var(--chart-5)",
+    ],
+    elementCount: 100,
+    lifetime: 100,
+  });
 
   const characters = searchParams.get("characters") || "";
   const characterNames = characters.split(",");
@@ -52,21 +66,15 @@ export default function Comparison() {
     <div className="p-4">
       <div className="flex justify-center">
         <div className="w-1/2"></div>
-        <div className="w-1/2">
-          <Confetti
-            width={window.innerWidth / 2}
-            height={window.innerHeight}
-            confettiSource={{
-              x: window.innerWidth / 2,
-              y: window.innerHeight - 900,
-              w: window.innerWidth / 2,
-              h: window.innerHeight - 900,
-            }}
-          />
-        </div>
+        <div className="w-1/2"></div>
       </div>
+      {typeof window !== "undefined" && <ConfettiExplosion />}
 
-      <ComparisonColumn />
+      <button onClick={reward}>
+        <span id="rewardId" />
+        🎉
+      </button>
+      {/* <ComparisonColumn /> */}
     </div>
   );
 
