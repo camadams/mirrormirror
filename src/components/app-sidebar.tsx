@@ -1,10 +1,11 @@
 "use client";
-import { Home, Scale, Search } from "lucide-react";
+import { Home, Moon, Scale, Search, Sun } from "lucide-react";
 import { Suspense } from "react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -14,6 +15,8 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Button } from "./ui/button";
+import { Switch } from "./ui/switch";
 
 // Menu items.
 const items = [
@@ -90,6 +93,26 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        {/* <SidebarMenuButton asChild className="flex items-center space-x-2"> */}
+        {/* <Button
+            id="dark-mode-toggle"
+            onClick={() => {
+              document.documentElement.classList.toggle("dark");
+            }}
+          > */}
+        <div className="flex items-center space-x-2 justify-center">
+          <Moon />
+          <Switch
+            onClick={() => {
+              document.documentElement.classList.toggle("dark");
+            }}
+          />
+          <Sun />
+        </div>
+        {/* </Button> */}
+        {/* </SidebarMenuButton> */}
+      </SidebarFooter>
     </Sidebar>
   );
 }
