@@ -94,13 +94,6 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {/* <SidebarMenuButton asChild className="flex items-center space-x-2"> */}
-        {/* <Button
-            id="dark-mode-toggle"
-            onClick={() => {
-              document.documentElement.classList.toggle("dark");
-            }}
-          > */}
         <div className="flex items-center space-x-2 justify-center">
           <Moon />
           <Switch
@@ -110,8 +103,6 @@ export function AppSidebar() {
           />
           <Sun />
         </div>
-        {/* </Button> */}
-        {/* </SidebarMenuButton> */}
       </SidebarFooter>
     </Sidebar>
   );
