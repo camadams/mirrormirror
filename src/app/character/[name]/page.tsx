@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
+import SafeImage from "@/components/SafeImage";
 
 export default function CharacterDetail() {
   return (
@@ -33,7 +34,7 @@ function CharacterContent() {
   const { status, data, error, isLoading } = useQuery({
     queryKey: ["character", characterName],
     queryFn: () => fetchCharacters(1, characterName),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: Infinity,
   });
 
   const character = data?.characters[0];
@@ -112,20 +113,15 @@ function CharacterContent() {
         <div className="bg-card rounded-xl shadow-lg overflow-hidden">
           {/* Character Header */}
           <div className="bg-primary/5 p-6 sm:p-8 flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
-              {character.imageUrl ? (
-                <Image
-                  src={character.imageUrl}
-                  alt={character.name}
-                  fill
-                  className="object-cover bg-white"
-                  priority
-                />
-              ) : (
-                <div className="w-full h-full bg-muted flex items-center justify-center">
-                  <Award className="h-16 w-16 text-muted-foreground/50" />
-                </div>
-              )}
+            <div className="relative w-48 h-48 md:w-64 md:h-64 overflow-hidden border-4 border-primary/20 shadow-lg">
+              <SafeImage
+                src={character.imageUrl}
+                fallbackSrc="/fallback-image.PNG"
+                alt={character.name}
+                fill
+                className="object-cover bg-white"
+                priority
+              />
             </div>
 
             <div className="text-center md:text-left">
@@ -225,21 +221,3 @@ function CharacterDetailSkeleton() {
     </div>
   );
 }
-
-// Add animation
-<style jsx global>{`
-  @keyframes float {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
-  }
-  .animate-float {
-    animation: float 4s ease-in-out infinite;
-  }
-`}</style>;

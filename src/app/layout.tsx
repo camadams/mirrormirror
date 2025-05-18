@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider";
+import { ReactQueryClientProvider } from "@/contexts/ReactQueryClientProvider";
 import DisneyMusicPlayer from "@/components/DisneyMusicPlayer";
 import { AudioProvider } from "@/contexts/AudioContext";
 
@@ -39,7 +39,6 @@ export default function RootLayout({
               <AppSidebar />
               <main className="w-full h-full">
                 <SidebarTrigger />
-                {/* Disney Music Player */}
                 <DisneyMusicPlayer />
                 {children}
               </main>

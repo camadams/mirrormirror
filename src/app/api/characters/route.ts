@@ -27,11 +27,11 @@ const parseDisneyResponse = (data: any): Array<Character> => {
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
+
   const page = Number(url.searchParams.get("page")) || 1;
   const name = url.searchParams.get("name") || "";
-  console.log({ name });
+
   try {
-    // Construct the API URL based on parameters
     const apiUrl = `https://api.disneyapi.dev/character?page=${page}&name=${name}`;
     const response = await fetch(apiUrl);
     const data = await response.json();

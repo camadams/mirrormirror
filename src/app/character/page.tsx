@@ -4,15 +4,14 @@ import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { useDebouncedValue } from "@tanstack/react-pacer";
-import Link from "next/link";
 import { fetchCharacters } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Search, Eye, GitCompare, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import DisneyMusicPlayer from "@/components/DisneyMusicPlayer";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import type { Character } from "@/lib/types";
+import SafeImage from "@/components/SafeImage";
 
 export default function Character() {
   return (
@@ -195,20 +194,16 @@ function Main() {
   function CharacterCard({ character }: { character: Character }) {
     return (
       <div className="bg-card rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg h-64 flex flex-col group relative">
-        {character.imageUrl ? (
-          <div className="relative w-full h-40 bg-muted/30">
-            <Image
-              src={character.imageUrl}
-              alt={character.name}
-              fill
-              className="object-contain"
-            />
-          </div>
-        ) : (
-          <div className="w-full h-40 bg-muted/50 flex items-center justify-center">
-            <span className="text-muted-foreground">No image</span>
-          </div>
-        )}
+        <div className="relative w-full h-40 bg-muted/30">
+          <SafeImage
+            src={character.imageUrl}
+            fallbackSrc="/fallback-image.PNG"
+            alt={character.name}
+            fill
+            className="object-contain"
+          />
+        </div>
+
         <div className="p-4 flex-grow flex flex-col justify-center">
           <h3 className="text-center font-medium text-primary transition-colors">
             {character.name}
@@ -300,7 +295,6 @@ function CharacterActionButton({
       variant: isSelected() ? ("outline" as const) : ("secondary" as const),
     },
   };
-
   const config = buttonConfig[type];
 
   return (
