@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCharacters } from "@/lib/utils";
+import SafeImage from "@/components/SafeImage";
 
 export default function Home() {
   const router = useRouter();
@@ -29,13 +30,14 @@ export default function Home() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black z-10"></div>
       {/* Character image grid background */}
       <div className="absolute inset-0 grid grid-cols-6 gap-1 opacity-60 overflow-hidden">
-        {data?.characters?.slice(0, 42).map((character, index) => (
+        {data?.characters?.slice(0, 20).map((character, index) => (
           <div
             key={index}
             className="relative aspect-square bg-gray-800 overflow-hidden"
           >
             {character.imageUrl && (
-              <Image
+              <SafeImage
+                fallbackSrc="/fallback-image.PNG"
                 src={character.imageUrl}
                 alt={character.name}
                 fill

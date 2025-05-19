@@ -17,37 +17,14 @@ export default function Compare() {
   return (
     <div className="items-center w-full font-[family-name:var(--font-geist-sans)]">
       <Suspense fallback={<div>Loading...</div>}>
-        <Comparison />
+        <Main />
       </Suspense>
     </div>
   );
 }
 
-function Comparison() {
+function Main() {
   const searchParams = useSearchParams();
-  const [showOverlay, setShowOverlay] = useState(false);
-  const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
-  const [isCelebrating, setIsCelebrating] = useState(false);
-
-  const character1Ref = useRef<HTMLDivElement>(null);
-  const character2Ref = useRef<HTMLDivElement>(null);
-  const rewardIdRef = useRef<string>("rewardId");
-
-  const { reward } = useReward(rewardIdRef.current, "confetti", {
-    spread: 180,
-    startVelocity: 20,
-    colors: [
-      "var(--chart-1)",
-      "var(--chart-2)",
-      "var(--chart-3)",
-      "var(--chart-4)",
-      "var(--chart-5)",
-    ],
-    elementCount: 200,
-    lifetime: 300,
-    elementSize: 12,
-  });
-
   const characters = searchParams.get("characters") || "";
   const characterNames = characters.split(",");
   const character1Name = characterNames[0];
@@ -76,6 +53,29 @@ function Comparison() {
   });
 
   const character2 = data2?.characters[0];
+
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
+  const [isCelebrating, setIsCelebrating] = useState(false);
+
+  const character1Ref = useRef<HTMLDivElement>(null);
+  const character2Ref = useRef<HTMLDivElement>(null);
+  const rewardIdRef = useRef<string>("rewardId");
+
+  const { reward } = useReward(rewardIdRef.current, "confetti", {
+    spread: 180,
+    startVelocity: 20,
+    colors: [
+      "var(--chart-1)",
+      "var(--chart-2)",
+      "var(--chart-3)",
+      "var(--chart-4)",
+      "var(--chart-5)",
+    ],
+    elementCount: 200,
+    lifetime: 300,
+    elementSize: 12,
+  });
 
   useEffect(() => {
     if (
@@ -160,9 +160,7 @@ function Comparison() {
   );
 
   function ComparisonContent() {
-    // Create arrays of comparison attributes
     const attributes = getScoringAttributes(character1, character2);
-
     return (
       <div className="bg-card rounded-lg shadow-lg p-6">
         {/* Character Names and Images Header */}

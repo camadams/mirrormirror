@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useState, useContext, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useRef,
+} from "react";
 
 interface AudioContextType {
   isPlaying: boolean;
@@ -9,10 +15,10 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
-export function AudioProvider({ 
+export function AudioProvider({
   children,
-  audioSrc 
-}: { 
+  audioSrc,
+}: {
   children: React.ReactNode;
   audioSrc: string;
 }) {
@@ -21,7 +27,6 @@ export function AudioProvider({
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    // Only create the audio element once
     if (!initializedRef.current) {
       audioRef.current = new Audio(audioSrc);
       audioRef.current.loop = true;
@@ -30,7 +35,6 @@ export function AudioProvider({
     }
 
     return () => {
-      // Only clean up when the provider is unmounted completely
       if (audioRef.current) {
         audioRef.current.pause();
       }
